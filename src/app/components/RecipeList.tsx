@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../supabaseClient";
 
 const RecipeList: React.FC = () => {
@@ -9,6 +9,8 @@ const RecipeList: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoria_id");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,12 +35,8 @@ const RecipeList: React.FC = () => {
     fetchData();
   }, []);
 
-  const handleRecipeClick = (recipeId: string, categoryId: string) => {
+  const handleRecipeClick = (recipeId: string) => {
     router.push(`/recipe-detail/${recipeId}?categoria_id=${categoryId}`);
-  };
-
-  const handleCategoryClick = (categoryId: string) => {
-    router.push(`/recipes?categoria_id=${categoryId}`);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -57,9 +55,7 @@ const RecipeList: React.FC = () => {
       <ul>
         {filteredRecipes.map((recipe) => (
           <li key={recipe.id}>
-            <button
-              onClick={() => handleRecipeClick(recipe.id, recipe.categoria_id)}
-            >
+            <button onClick={() => handleRecipeClick(recipe.id)}>
               {recipe.name}
             </button>
           </li>
