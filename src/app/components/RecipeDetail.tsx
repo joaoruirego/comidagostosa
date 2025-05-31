@@ -1,12 +1,51 @@
 "use client";
 
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "../supabaseClient";
 
 const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoria_id");
+  const [categories, setCategories] = useState<any[]>([]);
 
-  const handleStart = (categoryId: string) => {
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: categoriesData, error: categoriesError } = await supabase
+        .from("categorias")
+        .select("*");
+
+      if (categoriesError) {
+        console.error("Error fetching categories:", categoriesError);
+      } else {
+        setCategories(categoriesData || []);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategory = async () => {
+      if (!categoryId) return;
+      const { data: categoryData, error: categoryError } = await supabase
+        .from("categorias")
+        .select("*")
+        .eq("id", categoryId)
+        .single();
+
+      if (categoryError) {
+        console.error("Error fetching category:", categoryError);
+      } else {
+        setCategories([categoryData]);
+      }
+    };
+
+    fetchCategory();
+  }, [categoryId]);
+
+  const handleStart = () => {
     router.push(`/procedure/${recipe.id}?categoria_id=${categoryId}`);
   };
 
@@ -24,7 +63,7 @@ const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
           </li>
         ))}
       </ul>
-      <button onClick={() => handleStart(recipe.categoria_id)}>Começar</button>
+      <button onClick={handleStart}>Começar</button>
     </div>
   );
 };
