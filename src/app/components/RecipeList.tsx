@@ -23,8 +23,8 @@ const RecipeList: React.FC = () => {
     fetchRecipes();
   }, []);
 
-  const handleRecipeClick = (recipeId: string) => {
-    router.push(`/recipe-detail/${recipeId}`);
+  const handleRecipeClick = (recipeId: string, categoryId: string) => {
+    router.push(`/recipe-detail/${recipeId}?categoria_id=${categoryId}`);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>
@@ -43,7 +43,9 @@ const RecipeList: React.FC = () => {
       <ul>
         {filteredRecipes.map((recipe) => (
           <li key={recipe.id}>
-            <button onClick={() => handleRecipeClick(recipe.id)}>
+            <button
+              onClick={() => handleRecipeClick(recipe.id, recipe.categoria_id)}
+            >
               {recipe.name}
             </button>
           </li>

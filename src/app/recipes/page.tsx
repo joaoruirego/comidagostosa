@@ -1,7 +1,7 @@
 "use client";
 
-import React from 'react';
-import RecipeList from '../components/RecipeList';
+import React from "react";
+import RecipeList from "../components/RecipeList";
 
 const RecipesPage: React.FC = () => {
   return (
@@ -12,4 +12,4 @@ const RecipesPage: React.FC = () => {
   );
 };
 
-export default RecipesPage; 
+export default RecipesPage;
