@@ -2,25 +2,15 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "../styles/CategorySelection.module.css";
 import { supabase } from "../supabaseClient";
 
-type Category = {
-  id: number;
-  nome: string;
-  cor: string;
-  emoji: string;
-};
-
 const CategorySelection: React.FC = () => {
+  const [categories, setCategories] = useState<any[]>([]);
   const router = useRouter();
-  const [categories, setCategories] = useState<Category[]>([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const { data, error } = await supabase
-        .from("categorias")
-        .select("id, nome, cor, emoji");
+      const { data, error } = await supabase.from("categorias").select("*");
 
       if (error) {
         console.error("Error fetching categories:", error);
@@ -32,25 +22,17 @@ const CategorySelection: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleSelectCategoria = (id: string) => {
-    localStorage.setItem("categoria_id", id);
-    router.push("/recipes"); // ou próxima rota
+  const handleCategoryClick = (categoryId: string) => {
+    router.push(`/recipes?categoria_id=${categoryId}`);
   };
 
   return (
     <div>
       <h1>Escolha a Categoria</h1>
-      <ul className={styles.list}>
+      <ul>
         {categories.map((category) => (
-          <li
-            key={category.id}
-            className={styles.listItem}
-            style={{ backgroundColor: category.cor }}
-          >
-            <button
-              className={styles.button}
-              onClick={() => handleSelectCategoria(category.nome)}
-            >
+          <li key={category.id}>
+            <button onClick={() => handleCategoryClick(category.id)}>
               {category.emoji} {category.nome}
             </button>
           </li>

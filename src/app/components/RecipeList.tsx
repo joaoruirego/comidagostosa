@@ -2,18 +2,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import styles from "../styles/RecipeList.module.css";
 import { supabase } from "../supabaseClient";
 
-type Recipe = {
-  id: number;
-  name: string;
-  // Add other fields as necessary
-};
-
 const RecipeList: React.FC = () => {
+  const [recipes, setRecipes] = useState<any[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
-  const [recipes, setRecipes] = useState<Recipe[]>([]);
 
   useEffect(() => {
     const fetchRecipes = async () => {
@@ -29,25 +23,27 @@ const RecipeList: React.FC = () => {
     fetchRecipes();
   }, []);
 
-  const handleRecipeClick = (id: number) => {
-    router.push(`/recipe-detail/${id}`);
+  const handleRecipeClick = (recipeId: string) => {
+    router.push(`/recipe-detail/${recipeId}`);
   };
+
+  const filteredRecipes = recipes.filter((recipe) =>
+    recipe.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div>
       <h1>Lista de Receitas</h1>
       <input
-        className={styles.input}
         type="text"
-        placeholder="Pesquisar por receita ou tópico..."
+        placeholder="Pesquisar receitas..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <ul className={styles.list}>
-        {recipes.map((recipe) => (
-          <li key={recipe.id} className={styles.listItem}>
-            <button
-              className={styles.button}
-              onClick={() => handleRecipeClick(recipe.id)}
-            >
+      <ul>
+        {filteredRecipes.map((recipe) => (
+          <li key={recipe.id}>
+            <button onClick={() => handleRecipeClick(recipe.id)}>
               {recipe.name}
             </button>
           </li>

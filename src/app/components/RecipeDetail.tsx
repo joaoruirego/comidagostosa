@@ -1,25 +1,30 @@
 "use client";
 
 import React from "react";
-import styles from "../styles/RecipeDetail.module.css";
+import { useRouter } from "next/navigation";
 
 const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
+  const router = useRouter();
+
+  const handleStart = () => {
+    router.push(`/procedure/${recipe.id}`);
+  };
+
   return (
     <div>
       <h1>{recipe.name}</h1>
-      <img className={styles.img} src={recipe.imagem_url} alt={recipe.name} />
-      <p className={styles.description}>{recipe.description}</p>
-      <p className={styles.description}>
-        Tempo Estimado: {recipe.estimated_time} minutos
-      </p>
+      <img src={recipe.imagem_url} alt={recipe.name} />
+      <p>{recipe.description}</p>
+      <p>Tempo Estimado: {recipe.estimated_time} minutos</p>
       <h3>Ingredientes:</h3>
-      <ul className={styles.list}>
+      <ul>
         {recipe.ingredients.map((ingredient: any) => (
-          <li key={ingredient.id} className={styles.listItem}>
+          <li key={ingredient.id}>
             {ingredient.quantidade} {ingredient.nome}
           </li>
         ))}
       </ul>
+      <button onClick={handleStart}>Começar</button>
     </div>
   );
 };

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { supabase } from "../../supabaseClient";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ProcedureScreen({
   params,
@@ -14,13 +14,14 @@ export default function ProcedureScreen({
   const [challenges, setChallenges] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoria_id");
 
   useEffect(() => {
     const fetchData = async () => {
       // buscar categoria escolhida
-      const categoria_id = localStorage.getItem("categoria_id");
-      if (!categoria_id) {
-        console.error("❌ categoria_id não encontrado no localStorage");
+      if (!categoryId) {
+        console.error("❌ categoria_id não encontrado no URL");
         return;
       }
 
@@ -42,7 +43,7 @@ export default function ProcedureScreen({
       const { data: desafios, error: desafiosError } = await supabase
         .from("desafios")
         .select("*")
-        .eq("categoria_id", categoria_id);
+        .eq("categoria_id", categoryId);
 
       if (desafiosError || !desafios) {
         console.error("Erro ao buscar desafios:", desafiosError);
@@ -57,7 +58,7 @@ export default function ProcedureScreen({
     };
 
     fetchData();
-  }, [id]);
+  }, [id, categoryId]);
 
   if (procedures.length === 0 || challenges.length === 0)
     return <div>Loading...</div>;
