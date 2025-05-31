@@ -7,45 +7,76 @@ import { useRouter } from "next/navigation";
 export default function ProcedureScreen({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params); // ✅ CORRETO PARA NEXT 14
   const [procedures, setProcedures] = useState<any[]>([]);
+  const [challenges, setChallenges] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const router = useRouter();
-  const { id } = use(params);
 
   useEffect(() => {
-    const fetchProcedures = async () => {
-      const { data, error } = await supabase
+    const fetchData = async () => {
+      // buscar categoria escolhida
+      const categoria_id = localStorage.getItem("categoria_id");
+      if (!categoria_id) {
+        console.error("❌ categoria_id não encontrado no localStorage");
+        return;
+      }
+
+      // buscar passos da receita
+      const { data: passos, error: passosError } = await supabase
         .from("passos")
         .select("*")
         .eq("receita_id", id)
         .order("ordem");
 
-      if (error) {
-        console.error("Error fetching procedures:", error);
-      } else {
-        setProcedures(data);
+      if (passosError || !passos) {
+        console.error("Erro ao buscar passos:", passosError);
+        return;
       }
+
+      setProcedures(passos);
+
+      // buscar desafios da categoria
+      const { data: desafios, error: desafiosError } = await supabase
+        .from("desafios")
+        .select("*")
+        .eq("categoria_id", categoria_id);
+
+      if (desafiosError || !desafios) {
+        console.error("Erro ao buscar desafios:", desafiosError);
+        return;
+      }
+
+      // embaralha e limita à quantidade de passos
+      const desafiosAleatorios = desafios
+        .sort(() => Math.random() - 0.5)
+        .slice(0, passos.length);
+      setChallenges(desafiosAleatorios);
     };
 
-    fetchProcedures();
+    fetchData();
   }, [id]);
 
-  if (procedures.length === 0) return <div>Loading...</div>;
+  if (procedures.length === 0 || challenges.length === 0)
+    return <div>Loading...</div>;
+
+  const isStep = currentStep % 2 === 0;
+  const index = Math.floor(currentStep / 2);
 
   const handleNext = () => {
-    if (currentStep < procedures.length - 1) {
+    if (currentStep < procedures.length * 2 - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      router.push(`/challenge/${id}`);
+      router.push(`/recipe-detail/${id}`);
     }
   };
 
   return (
     <div>
-      <h1>Procedimento {currentStep + 1}</h1>
-      <p>{procedures[currentStep].instrucoes}</p>
+      <h1>{isStep ? `Procedimento ${index + 1}` : `Desafio ${index + 1}`}</h1>
+      <p>{isStep ? procedures[index].instrucoes : challenges[index].texto}</p>
       <button onClick={handleNext}>Próximo</button>
     </div>
   );

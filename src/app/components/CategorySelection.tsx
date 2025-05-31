@@ -32,8 +32,9 @@ const CategorySelection: React.FC = () => {
     fetchCategories();
   }, []);
 
-  const handleCategoryClick = (category: string) => {
-    router.push(`/recipes?category=${category}`);
+  const handleSelectCategoria = (id: string) => {
+    localStorage.setItem("categoria_id", id);
+    router.push("/recipes"); // ou próxima rota
   };
 
   return (
@@ -48,7 +49,7 @@ const CategorySelection: React.FC = () => {
           >
             <button
               className={styles.button}
-              onClick={() => handleCategoryClick(category.nome)}
+              onClick={() => handleSelectCategoria(category.nome)}
             >
               {category.emoji} {category.nome}
             </button>
