@@ -86,7 +86,7 @@ export default function ProcedureScreen({
     if (currentStep < procedures.length * 2 - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      router.push(`/recipe-detail/${id}`);
+      router.push(`/recipe-detail/${id}?categoria_id=${categoryId}`);
     }
   };
 
