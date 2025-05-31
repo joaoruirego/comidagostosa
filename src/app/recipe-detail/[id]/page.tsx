@@ -7,51 +7,47 @@ import { useRouter } from "next/navigation";
 export default function RecipeDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
   const [recipe, setRecipe] = useState<any>(null);
   const [procedures, setProcedures] = useState<any[]>([]);
   const [challenges, setChallenges] = useState<any[]>([]);
-  const { id } = use(params);
   const router = useRouter();
 
   useEffect(() => {
-    console.log("Fetching recipe with ID:", id);
     const fetchDetails = async () => {
-      const { data: recipeData, error: recipeError } = await supabase
-        .from("receitas")
-        .select("*")
-        .eq("id", id)
-        .single();
+      try {
+        const { data: recipeData, error: recipeError } = await supabase
+          .from("receitas")
+          .select("*")
+          .eq("id", id)
+          .single();
 
-      if (recipeError) {
-        console.error("Error fetching recipe:", recipeError);
-      } else {
-        console.log("Fetched recipe data:", recipeData);
+        if (recipeError) throw recipeError;
         setRecipe(recipeData);
-      }
 
-      const { data: procedureData, error: procedureError } = await supabase
-        .from("passos")
-        .select("*")
-        .eq("receita_id", id)
-        .order("ordem");
+        const { data: procedureData, error: procedureError } = await supabase
+          .from("passos")
+          .select("*")
+          .eq("receita_id", id)
+          .order("ordem");
 
-      if (procedureError) {
-        console.error("Error fetching procedures:", procedureError);
-      } else {
+        if (procedureError) throw procedureError;
         setProcedures(procedureData);
-      }
 
-      const { data: challengeData, error: challengeError } = await supabase
-        .from("desafios")
-        .select("*")
-        .eq("categoria_id", recipeData.categoria_id);
+        // Esta parte é opcional se ainda tiveres categoria_id na receita
+        if (recipeData?.categoria_id) {
+          const { data: challengeData, error: challengeError } = await supabase
+            .from("desafios")
+            .select("*")
+            .eq("categoria_id", recipeData.categoria_id);
 
-      if (challengeError) {
-        console.error("Error fetching challenges:", challengeError);
-      } else {
-        setChallenges(challengeData);
+          if (challengeError) throw challengeError;
+          setChallenges(challengeData);
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
       }
     };
 
