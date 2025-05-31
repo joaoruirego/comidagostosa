@@ -2,24 +2,32 @@
 
 import { useEffect, useState, use } from "react";
 import { supabase } from "../../supabaseClient";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function ChallengeScreen({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const { id } = use(params);
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("category_id"); // ✅ categoriaId correto da URL
+
   const [challenges, setChallenges] = useState<any[]>([]);
   const [currentChallenge, setCurrentChallenge] = useState(0);
   const router = useRouter();
-  const { id } = use(params);
 
   useEffect(() => {
+    if (!categoryId) {
+      console.error("⚠️ category_id não está na URL");
+      return;
+    }
+
     const fetchChallenges = async () => {
       const { data, error } = await supabase
         .from("desafios")
         .select("*")
-        .eq("categoria_id", id);
+        .eq("categoria_id", categoryId); // ✅ aqui tá certo agora
 
       if (error) {
         console.error("Error fetching challenges:", error);
@@ -29,7 +37,7 @@ export default function ChallengeScreen({
     };
 
     fetchChallenges();
-  }, [id]);
+  }, [categoryId]);
 
   if (challenges.length === 0) return <div>Loading...</div>;
 
