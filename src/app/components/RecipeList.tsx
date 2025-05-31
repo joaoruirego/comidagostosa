@@ -6,25 +6,39 @@ import { supabase } from "../supabaseClient";
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    const fetchRecipes = async () => {
-      const { data, error } = await supabase.from("receitas").select("*");
+    const fetchData = async () => {
+      const [recipesResponse, categoriesResponse] = await Promise.all([
+        supabase.from("receitas").select("*"),
+        supabase.from("categorias").select("*"),
+      ]);
 
-      if (error) {
-        console.error("Error fetching recipes:", error);
+      if (recipesResponse.error) {
+        console.error("Error fetching recipes:", recipesResponse.error);
       } else {
-        setRecipes(data);
+        setRecipes(recipesResponse.data);
+      }
+
+      if (categoriesResponse.error) {
+        console.error("Error fetching categories:", categoriesResponse.error);
+      } else {
+        setCategories(categoriesResponse.data);
       }
     };
 
-    fetchRecipes();
+    fetchData();
   }, []);
 
   const handleRecipeClick = (recipeId: string, categoryId: string) => {
     router.push(`/recipe-detail/${recipeId}?categoria_id=${categoryId}`);
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    router.push(`/recipes?categoria_id=${categoryId}`);
   };
 
   const filteredRecipes = recipes.filter((recipe) =>

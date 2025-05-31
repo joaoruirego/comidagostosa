@@ -9,7 +9,7 @@ const RecipeDetailPage: React.FC<{ params: { id: string } }> = ({ params }) => {
   const [recipe, setRecipe] = useState<any>(null);
   const [ingredients, setIngredients] = useState<any[]>([]);
   const router = useRouter();
-  const { id } = params;
+  const { id } = React.use(params);
 
   useEffect(() => {
     const fetchRecipeAndIngredients = async () => {

@@ -9,59 +9,75 @@ export default function ProcedureScreen({
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params); // ✅ CORRETO PARA NEXT 14
+  const { id } = use(params);
   const [procedures, setProcedures] = useState<any[]>([]);
   const [challenges, setChallenges] = useState<any[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoria_id");
 
   useEffect(() => {
     const fetchData = async () => {
-      // buscar categoria escolhida
-      if (!categoryId) {
-        console.error("❌ categoria_id não encontrado no URL");
-        return;
+      try {
+        if (!categoryId) {
+          setError(
+            "Categoria não encontrada. Por favor, selecione uma categoria."
+          );
+          return;
+        }
+
+        // buscar passos da receita
+        const { data: passos, error: passosError } = await supabase
+          .from("passos")
+          .select("*")
+          .eq("receita_id", id)
+          .order("ordem");
+
+        if (passosError || !passos) {
+          setError("Erro ao carregar os passos da receita.");
+          return;
+        }
+
+        setProcedures(passos);
+
+        // buscar desafios da categoria
+        const { data: desafios, error: desafiosError } = await supabase
+          .from("desafios")
+          .select("*")
+          .eq("categoria_id", categoryId);
+
+        if (desafiosError || !desafios) {
+          setError("Erro ao carregar os desafios.");
+          return;
+        }
+
+        // embaralha e limita à quantidade de passos
+        const desafiosAleatorios = desafios
+          .sort(() => Math.random() - 0.5)
+          .slice(0, passos.length);
+        setChallenges(desafiosAleatorios);
+      } catch (err) {
+        setError("Ocorreu um erro inesperado. Por favor, tente novamente.");
       }
-
-      // buscar passos da receita
-      const { data: passos, error: passosError } = await supabase
-        .from("passos")
-        .select("*")
-        .eq("receita_id", id)
-        .order("ordem");
-
-      if (passosError || !passos) {
-        console.error("Erro ao buscar passos:", passosError);
-        return;
-      }
-
-      setProcedures(passos);
-
-      // buscar desafios da categoria
-      const { data: desafios, error: desafiosError } = await supabase
-        .from("desafios")
-        .select("*")
-        .eq("categoria_id", categoryId);
-
-      if (desafiosError || !desafios) {
-        console.error("Erro ao buscar desafios:", desafiosError);
-        return;
-      }
-
-      // embaralha e limita à quantidade de passos
-      const desafiosAleatorios = desafios
-        .sort(() => Math.random() - 0.5)
-        .slice(0, passos.length);
-      setChallenges(desafiosAleatorios);
     };
 
     fetchData();
   }, [id, categoryId]);
 
-  if (procedures.length === 0 || challenges.length === 0)
-    return <div>Loading...</div>;
+  if (error) {
+    return (
+      <div className="error-container">
+        <p>{error}</p>
+        <button onClick={() => router.back()}>Voltar</button>
+      </div>
+    );
+  }
+
+  if (procedures.length === 0 || challenges.length === 0) {
+    return <div>Carregando...</div>;
+  }
 
   const isStep = currentStep % 2 === 0;
   const index = Math.floor(currentStep / 2);

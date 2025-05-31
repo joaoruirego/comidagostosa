@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
   const router = useRouter();
 
-  const handleStart = () => {
-    router.push(`/procedure/${recipe.id}`);
+  const handleStart = (categoryId: string) => {
+    router.push(`/procedure/${recipe.id}?categoria_id=${categoryId}`);
   };
 
   return (
@@ -24,7 +24,7 @@ const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
           </li>
         ))}
       </ul>
-      <button onClick={handleStart}>Começar</button>
+      <button onClick={() => handleStart(recipe.categoria_id)}>Começar</button>
     </div>
   );
 };
