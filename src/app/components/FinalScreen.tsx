@@ -1,13 +1,54 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState } from "react";
 import styles from "../styles/FinalScreen.module.css";
 import Image from "next/image";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const FinalScreen: React.FC = () => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const categoryId = searchParams.get("categoria_id");
+  const id = searchParams.get("id");
+
   const handleTakePhoto = () => {
-    // Logic to take a photo
-    console.log("Taking a photo...");
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setSelectedImage(imageUrl);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Here you would typically send the email and image to your backend
+    // For example:
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      if (selectedImage) {
+        formData.append("image", selectedImage);
+      }
+
+      // Replace with your actual API endpoint
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error sending email:", error);
+    }
   };
 
   return (
@@ -28,12 +69,45 @@ const FinalScreen: React.FC = () => {
           opacity: 0.15,
         }}
       />
-      <h1 className={styles.title}>Agora é hora de comer e tirar fotos</h1>
-      <h1 className={styles.description}>
-        Parabéns, superaram todos os desafios! Vamos tirar fotos dos chefes para
-        que eles possam ver o que você fez
-      </h1>
-      <button onClick={handleTakePhoto} className={styles.button}></button>
+
+      {selectedImage ? (
+        <form onSubmit={handleSubmit}>
+          <Image
+            src={selectedImage}
+            alt="Selected photo"
+            width={300}
+            height={300}
+            className={styles.image}
+          />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Digite seu email"
+            required
+            className={styles.emailInput}
+          />
+          <button type="submit" className={styles.buttonConcluir}>
+            Concluir
+          </button>
+        </form>
+      ) : (
+        <>
+          <h1 className={styles.title}>É hora de comer e tirar fotos</h1>
+          <h1 className={styles.description}>
+            Parabéns, superaram todos os desafios! Vamos tirar fotos dos nossos
+            chefes!
+          </h1>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="image/*"
+            style={{ display: "none" }}
+          />
+          <button onClick={handleTakePhoto} className={styles.button}></button>
+        </>
+      )}
     </div>
   );
 };
