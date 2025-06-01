@@ -16,6 +16,15 @@ type Challenge = {
   texto: string;
 };
 
+const SkeletonProcedureScreen: React.FC = () => (
+  <div className={styles.container}>
+    <h1 className={styles.title}>😅</h1>
+    <div className={styles.skeletonText}></div>
+    <div className={styles.skeletonText}></div>
+    <button className={styles.skeletonButton}>Só um momento...</button>
+  </div>
+);
+
 export default function ProcedureScreen({
   params,
 }: {
@@ -88,7 +97,7 @@ export default function ProcedureScreen({
   }
 
   if (procedures.length === 0 || challenges.length === 0) {
-    return <div>Carregando...</div>;
+    return <SkeletonProcedureScreen />;
   }
 
   const isStep = currentStep % 2 === 0;

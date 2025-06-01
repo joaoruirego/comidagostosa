@@ -3,6 +3,7 @@
 import React, { useEffect, useState, use } from "react";
 import { supabase } from "../../supabaseClient";
 import RecipeDetail from "../../components/RecipeDetail";
+import styles from "../../styles/RecipeDetail.module.css";
 
 type Ingredient = {
   id: string;
@@ -17,6 +18,22 @@ type Recipe = {
   estimated_time: number;
   imagem_url: string;
 };
+
+const SkeletonRecipeDetailPage: React.FC = () => (
+  <div className={styles.container}>
+    <p className={styles.skeletonTitle}></p>
+    <div className={styles.skeletonImage}></div>
+    <p className={styles.skeletonText}></p>
+    <p className={styles.skeletonText}></p>
+    <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
+    <ul className={styles.ingredientsList}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <li key={index} className={styles.skeletonText}></li>
+      ))}
+    </ul>
+    <button className={styles.skeletonButton}></button>
+  </div>
+);
 
 const RecipeDetailPage: React.FC<{ params: Promise<{ id: string }> }> = ({
   params,
@@ -62,7 +79,7 @@ const RecipeDetailPage: React.FC<{ params: Promise<{ id: string }> }> = ({
     fetchRecipeAndIngredients();
   }, [id]);
 
-  if (!recipe) return <div>Loading...</div>;
+  if (!recipe) return <SkeletonRecipeDetailPage />;
 
   return <RecipeDetail recipe={{ ...recipe, ingredients }} />;
 };

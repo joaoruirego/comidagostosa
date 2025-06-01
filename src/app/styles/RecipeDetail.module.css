@@ -82,18 +82,25 @@
 .skeletonImage {
   width: 100%;
   max-width: 500px;
-  height: 300px;
+  height: 200px;
   background-color: #e0e0e0;
   border-radius: 10px;
   margin-bottom: 1rem;
 }
 
-.skeletonText {
+.skeletonText,
+.skeletonTitle {
   width: 80%;
   height: 20px;
   background-color: #e0e0e0;
   border-radius: 5px;
   margin-bottom: 0.5rem;
+}
+
+.skeletonTitle {
+  height: 40px;
+  margin-bottom: 1rem;
+  border-radius: 10px;
 }
 
 .skeletonButton {
