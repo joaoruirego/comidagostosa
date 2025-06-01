@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../supabaseClient";
+import styles from "../styles/RecipeList.module.css";
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -44,18 +45,22 @@ const RecipeList: React.FC = () => {
   );
 
   return (
-    <div>
-      <h1>Lista de Receitas</h1>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Lista de Receitas</h1>
       <input
         type="text"
         placeholder="Pesquisar receitas..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
+        className={styles.searchInput}
       />
-      <ul>
+      <ul className={styles.recipeList}>
         {filteredRecipes.map((recipe) => (
-          <li key={recipe.id}>
-            <button onClick={() => handleRecipeClick(recipe.id)}>
+          <li className={styles.recipeItem} key={recipe.id}>
+            <button
+              className={styles.recipeButton}
+              onClick={() => handleRecipeClick(recipe.id)}
+            >
               {recipe.name}
             </button>
           </li>

@@ -1,0 +1,52 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100vh;
+  padding: 0 100px;
+}
+
+.title {
+  font-size: 5rem;
+  font-weight: bold;
+  letter-spacing: -0.05em;
+  line-height: 85%;
+  margin-bottom: 30px;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 20px;
+  border-radius: 50px;
+  font-size: 1.5rem;
+  border: none;
+  margin-bottom: 30px;
+  outline: none;
+  background-color: #fff;
+  color: #000;
+}
+
+.recipeList {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  background-color: #fff;
+  width: 100%;
+  border-radius: 50px;
+  padding: 20px;
+}
+
+.recipeItem {
+  width: 100%;
+  padding: 20px;
+  border-radius: 50px;
+  background-color: #fff;
+}
+
+.recipeButton {
+  width: 100%;
+  padding: 20px;
+  border-radius: 50px;
+}
