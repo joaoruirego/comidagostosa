@@ -68,7 +68,9 @@
   font-weight: 600;
   color: #fff;
   box-shadow: 0 0 250px 0 #9000ffaa;
-  background-color: #9000ff;
+  background-color: #9000ff99;
+  backdrop-filter: blur(4px);
+
   border: none;
   border-radius: 10px;
   cursor: pointer;
@@ -114,7 +116,8 @@
   font-weight: 600;
   color: #fff;
   box-shadow: 0 0 250px 0 #9000ffaa;
-  background-color: #9000ff;
+  background-color: #9000ffaa;
+  backdrop-filter: blur(10px);
   border: none;
   border-radius: 10px;
   cursor: pointer;
