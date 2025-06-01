@@ -16,6 +16,11 @@ export const metadata: Metadata = {
   title: "Comida Engraçada",
   description:
     "Faz desafios com os teus amigos e família para te rires a cozinhar!",
+  icons: {
+    icon: "/favicon.ico", // standard favicon
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico", // for Safari/iOS
+  },
 };
 
 export default function RootLayout({

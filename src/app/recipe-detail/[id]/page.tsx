@@ -25,13 +25,12 @@ const SkeletonRecipeDetailPage: React.FC = () => (
     <div className={styles.skeletonImage}></div>
     <p className={styles.skeletonText}></p>
     <p className={styles.skeletonText}></p>
-    <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
     <ul className={styles.ingredientsList}>
       {Array.from({ length: 5 }).map((_, index) => (
         <li key={index} className={styles.skeletonText}></li>
       ))}
     </ul>
-    <button className={styles.skeletonButton}></button>
+    <button className={styles.skeletonButton}>Só um momento...</button>
   </div>
 );
 

@@ -22,7 +22,7 @@ type Recipe = {
 
 const SkeletonRecipeDetail: React.FC = () => (
   <div className={styles.container}>
-    <h1 className={styles.title}>Loading...</h1>
+    <h1 className={styles.title}>😅</h1>
     <div className={styles.skeletonImage}></div>
     <p className={styles.skeletonText}></p>
     <p className={styles.skeletonText}></p>
@@ -32,7 +32,7 @@ const SkeletonRecipeDetail: React.FC = () => (
         <li key={index} className={styles.skeletonText}></li>
       ))}
     </ul>
-    <button className={styles.skeletonButton}></button>
+    <button className={styles.skeletonButton}>Só um momento...</button>
   </div>
 );
 
