@@ -20,6 +20,22 @@ type Recipe = {
   ingredients: Ingredient[];
 };
 
+const SkeletonRecipeDetail: React.FC = () => (
+  <div className={styles.container}>
+    <h1 className={styles.title}>Loading...</h1>
+    <div className={styles.skeletonImage}></div>
+    <p className={styles.skeletonText}></p>
+    <p className={styles.skeletonText}></p>
+    <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
+    <ul className={styles.ingredientsList}>
+      {Array.from({ length: 5 }).map((_, index) => (
+        <li key={index} className={styles.skeletonText}></li>
+      ))}
+    </ul>
+    <button className={styles.skeletonButton}></button>
+  </div>
+);
+
 const RecipeDetail: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -30,7 +46,7 @@ const RecipeDetail: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   };
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<SkeletonRecipeDetail />}>
       <div className={styles.container}>
         <h1 className={styles.title}>{recipe.name}</h1>
         <Image
