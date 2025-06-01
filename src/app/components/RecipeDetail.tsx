@@ -37,8 +37,8 @@ const RecipeDetail: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
           className={styles.image}
           src={recipe.imagem_url}
           alt={recipe.name}
-          width={100}
-          height={100}
+          width={1000}
+          height={1000}
         />
         <p className={styles.description}>{recipe.description}</p>
         <p className={styles.time}>
