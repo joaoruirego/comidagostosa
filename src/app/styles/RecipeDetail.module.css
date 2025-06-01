@@ -4,8 +4,9 @@
   height: 100%;
   padding: 50px 20px;
   border-radius: 10px;
-  padding-bottom: 100px;
+  padding-bottom: 150px;
   overflow-y: auto;
+  height: 100vh;
 }
 
 .title {
