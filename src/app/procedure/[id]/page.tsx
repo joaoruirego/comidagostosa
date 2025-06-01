@@ -4,7 +4,7 @@ import { useEffect, useState, use, Suspense } from "react";
 import { supabase } from "../../supabaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../../styles/ProcedureScreen.module.css";
-
+import Image from "next/image";
 type Procedure = {
   id: string;
   instrucoes: string;
@@ -114,6 +114,22 @@ export default function ProcedureScreen({
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className={styles.container}>
+        <Image
+          src="/backgroundTeste2.png"
+          alt="background"
+          width={1000}
+          height={1000}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -1,
+            opacity: 0.15,
+          }}
+        />
         <h1 className={styles.title}>
           {isStep ? `Passo ${index + 1}` : `Desafio ${index + 1}`}
         </h1>

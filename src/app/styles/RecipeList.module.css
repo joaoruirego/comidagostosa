@@ -3,7 +3,9 @@
   flex-direction: column;
   justify-content: flex-start;
   height: 100vh;
+
   padding: 100px;
+  overflow-y: auto;
 }
 
 .title {

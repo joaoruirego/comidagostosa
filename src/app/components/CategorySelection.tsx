@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../supabaseClient";
 import styles from "../styles/CategorySelection.module.css";
-
+import Image from "next/image";
 type Category = {
   id: string;
   nome: string;
@@ -35,6 +35,22 @@ const CategorySelection: React.FC = () => {
 
   return (
     <div className={styles.container}>
+      <Image
+        src="/backgroundTeste2.png"
+        alt="background"
+        width={1000}
+        height={1000}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: -1,
+          opacity: 0.15,
+        }}
+      />
       <h1 className={styles.title}>Escolha a Categoria</h1>
       <ul className={styles.list}>
         {categories.map((category) => (

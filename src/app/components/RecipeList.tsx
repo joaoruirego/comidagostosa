@@ -49,6 +49,22 @@ const RecipeList: React.FC = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className={styles.container}>
+        <Image
+          src="/backgroundTeste2.png"
+          alt="background"
+          width={1000}
+          height={1000}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -1,
+            opacity: 0.15,
+          }}
+        />
         <h1 className={styles.title}>Lista de Receitas</h1>
         <input
           type="text"

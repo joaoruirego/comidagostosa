@@ -98,6 +98,22 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
   return (
     <Suspense fallback={<SkeletonRecipeDetail />}>
       <div className={styles.container}>
+        <Image
+          src="/backgroundTeste2.png"
+          alt="background"
+          width={1000}
+          height={1000}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: -1,
+            opacity: 0.15,
+          }}
+        />
         <h1 className={styles.title}>{baseRecipe.name}</h1>
         <Image
           className={styles.image}
