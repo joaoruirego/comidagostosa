@@ -61,7 +61,16 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
       if (error) {
         console.error("Erro ao buscar ingredientes:", error);
       } else {
-        setIngredients(data || []);
+        setIngredients(
+          data.map((item) => ({
+            id: item.id,
+            quantidade: item.quantidade,
+            ingrediente_id: item.ingrediente_id,
+            ingredientes: {
+              nome: item.ingredientes[0].nome,
+            },
+          })) || []
+        );
       }
 
       setLoading(false);

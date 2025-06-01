@@ -80,7 +80,12 @@ const RecipeDetailPage: React.FC<{ params: Promise<{ id: string }> }> = ({
 
   if (!recipe) return <SkeletonRecipeDetailPage />;
 
-  return <RecipeDetail recipe={{ ...recipe, ingredients }} />;
+  const recipeWithIngredients = {
+    ...recipe,
+    ingredients: ingredients,
+  };
+
+  return <RecipeDetail recipe={recipeWithIngredients} />;
 };
 
 export default RecipeDetailPage;
