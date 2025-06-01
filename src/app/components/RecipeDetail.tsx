@@ -6,13 +6,12 @@ import styles from "../styles/RecipeDetail.module.css";
 import Image from "next/image";
 import { supabase } from "../supabaseClient";
 
+// Types
 type Ingredient = {
   id: string;
   quantidade: string;
   ingrediente_id: string;
-  ingredientes: {
-    nome: string;
-  };
+  ingredientes: { nome: string | null } | null;
 };
 
 type Recipe = {
@@ -22,6 +21,13 @@ type Recipe = {
   estimated_time: number;
   imagem_url: string;
   ingredients: Ingredient[];
+};
+
+type RawIngredient = {
+  id: string;
+  quantidade: string;
+  ingrediente_id: string;
+  ingredientes: { nome: string | null } | null | { nome: string | null }[];
 };
 
 const SkeletonRecipeDetail: React.FC = () => (
@@ -52,6 +58,7 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
 
   useEffect(() => {
     const fetchIngredients = async () => {
+      setLoading(true);
       const { data, error } = await supabase
         .from("receita_ingredientes")
         .select("id, quantidade, ingrediente_id, ingredientes(nome)")
@@ -60,19 +67,24 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
 
       if (error) {
         console.error("Erro ao buscar ingredientes:", error);
-      } else {
-        setIngredients(
-          data.map((item) => ({
-            id: item.id,
-            quantidade: item.quantidade,
-            ingrediente_id: item.ingrediente_id,
-            ingredientes: {
-              nome: item.ingredientes[0].nome,
-            },
-          })) || []
-        );
+        setIngredients([]);
+      } else if (data) {
+        // Type guard: ingredientes must be object or null, never array
+        const normalized: Ingredient[] = data.map((item: RawIngredient) => ({
+          id: item.id,
+          quantidade: item.quantidade,
+          ingrediente_id: item.ingrediente_id,
+          ingredientes:
+            item.ingredientes && !Array.isArray(item.ingredientes)
+              ? item.ingredientes
+              : item.ingredientes &&
+                Array.isArray(item.ingredientes) &&
+                item.ingredientes.length > 0
+              ? item.ingredientes[0]
+              : { nome: "" },
+        }));
+        setIngredients(normalized);
       }
-
       setLoading(false);
     };
 
@@ -114,7 +126,7 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
                 style={{ fontWeight: 500 }}
                 className={styles.ingredientItem}
               >
-                {ingredient.ingredientes.nome}{" "}
+                {ingredient.ingredientes?.nome || "[Sem nome]"}{" "}
                 <b style={{ fontWeight: 300 }}>{ingredient.quantidade}</b>
               </li>
             ))}
