@@ -5,14 +5,25 @@ import { supabase } from "../../supabaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../../styles/ProcedureScreen.module.css";
 
+type Procedure = {
+  id: string;
+  instrucoes: string;
+  ordem: number;
+};
+
+type Challenge = {
+  id: string;
+  texto: string;
+};
+
 export default function ProcedureScreen({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = use(params);
-  const [procedures, setProcedures] = useState<any[]>([]);
-  const [challenges, setChallenges] = useState<any[]>([]);
+  const [procedures, setProcedures] = useState<Procedure[]>([]);
+  const [challenges, setChallenges] = useState<Challenge[]>([]);
   const [currentStep, setCurrentStep] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -59,7 +70,7 @@ export default function ProcedureScreen({
           .sort(() => Math.random() - 0.5)
           .slice(0, passos.length);
         setChallenges(desafiosAleatorios);
-      } catch (err) {
+      } catch {
         setError("Ocorreu um erro inesperado. Por favor, tente novamente.");
       }
     };

@@ -5,8 +5,14 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../supabaseClient";
 import styles from "../styles/CategorySelection.module.css";
 
+type Category = {
+  id: string;
+  nome: string;
+  emoji: string;
+};
+
 const CategorySelection: React.FC = () => {
-  const [categories, setCategories] = useState<any[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
 
   useEffect(() => {

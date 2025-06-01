@@ -1,15 +1,29 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState, use } from "react";
 import { supabase } from "../../supabaseClient";
 import RecipeDetail from "../../components/RecipeDetail";
 
-const RecipeDetailPage: React.FC<{ params: { id: string } }> = ({ params }) => {
-  const [recipe, setRecipe] = useState<any>(null);
-  const [ingredients, setIngredients] = useState<any[]>([]);
-  const router = useRouter();
-  const { id } = React.use(params);
+type Ingredient = {
+  id: string;
+  quantidade: string;
+  nome: string;
+};
+
+type Recipe = {
+  id: string;
+  name: string;
+  description: string;
+  estimated_time: number;
+  imagem_url: string;
+};
+
+const RecipeDetailPage: React.FC<{ params: Promise<{ id: string }> }> = ({
+  params,
+}) => {
+  const { id } = use(params);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
 
   useEffect(() => {
     const fetchRecipeAndIngredients = async () => {

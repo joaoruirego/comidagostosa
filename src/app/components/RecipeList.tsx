@@ -6,9 +6,16 @@ import { supabase } from "../supabaseClient";
 import styles from "../styles/RecipeList.module.css";
 import Image from "next/image";
 
+type Recipe = {
+  id: string;
+  name: string;
+  description: string;
+  estimated_time: number;
+  imagem_url: string;
+};
+
 const RecipeList: React.FC = () => {
-  const [recipes, setRecipes] = useState<any[]>([]);
-  const [categories, setCategories] = useState<any[]>([]);
+  const [recipes, setRecipes] = useState<Recipe[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -17,21 +24,12 @@ const RecipeList: React.FC = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const [recipesResponse, categoriesResponse] = await Promise.all([
-        supabase.from("receitas").select("*"),
-        supabase.from("categorias").select("*"),
-      ]);
+      const recipesResponse = await supabase.from("receitas").select("*");
 
       if (recipesResponse.error) {
         console.error("Error fetching recipes:", recipesResponse.error);
       } else {
         setRecipes(recipesResponse.data);
-      }
-
-      if (categoriesResponse.error) {
-        console.error("Error fetching categories:", categoriesResponse.error);
-      } else {
-        setCategories(categoriesResponse.data);
       }
 
       setLoading(false);
