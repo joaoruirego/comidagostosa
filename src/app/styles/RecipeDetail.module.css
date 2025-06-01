@@ -1,0 +1,75 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 50px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.05em;
+  line-height: 85%;
+  color: #333;
+}
+
+.image {
+  width: 100%;
+  max-width: 500px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1.125rem;
+  color: #666;
+  margin-bottom: 1rem;
+  line-height: 105%;
+}
+
+.time {
+  font-size: 1rem;
+  color: #999;
+  margin-bottom: 1rem;
+}
+
+.ingredientsTitle {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #333;
+  margin-top: 1rem;
+}
+
+.ingredientsList {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1rem;
+}
+
+.ingredientItem {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 0.5rem;
+}
+
+.startButton {
+  padding: 15px 0px;
+  font-size: 1.1rem;
+  letter-spacing: 0.02em;
+  font-weight: 600;
+  color: #fff;
+  box-shadow: 0 0 250px 0 #9000ffaa;
+  background-color: #9000ff;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.startButton:hover {
+  background-color: #56b37f;
+}

@@ -53,7 +53,7 @@ const RecipeList: React.FC = () => {
       <h1 className={styles.title}>Lista de Receitas</h1>
       <input
         type="text"
-        placeholder="Pesquisar receitas..."
+        placeholder="🔎 Pesquisar receitas..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
         className={styles.searchInput}
@@ -77,10 +77,10 @@ const RecipeList: React.FC = () => {
               >
                 <div className={styles.recipeImage}>
                   <Image
-                    src={recipe.image}
+                    src={recipe.imagem_url}
                     alt={recipe.name}
-                    width={100}
-                    height={100}
+                    width={1000}
+                    height={1000}
                   />
                 </div>
                 <div className={styles.recipeContent}>
@@ -91,7 +91,7 @@ const RecipeList: React.FC = () => {
                   </div>
 
                   <div className={styles.recipeTime}>
-                    {recipe.estimated_time} minutos
+                    <span>⏱️</span> {recipe.estimated_time} minutos
                   </div>
                 </div>
               </button>

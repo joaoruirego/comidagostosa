@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../supabaseClient";
+import styles from "../styles/RecipeDetail.module.css";
 
 const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
   const router = useRouter();
@@ -50,20 +51,24 @@ const RecipeDetail: React.FC<{ recipe: any }> = ({ recipe }) => {
   };
 
   return (
-    <div>
-      <h1>{recipe.name}</h1>
-      <img src={recipe.imagem_url} alt={recipe.name} />
-      <p>{recipe.description}</p>
-      <p>Tempo Estimado: {recipe.estimated_time} minutos</p>
-      <h3>Ingredientes:</h3>
-      <ul>
+    <div className={styles.container}>
+      <h1 className={styles.title}>{recipe.name}</h1>
+      <img className={styles.image} src={recipe.imagem_url} alt={recipe.name} />
+      <p className={styles.description}>{recipe.description}</p>
+      <p className={styles.time}>
+        ⏱️ Tempo Estimado: {recipe.estimated_time} minutos
+      </p>
+      <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
+      <ul className={styles.ingredientsList}>
         {recipe.ingredients.map((ingredient: any) => (
-          <li key={ingredient.id}>
+          <li key={ingredient.id} className={styles.ingredientItem}>
             {ingredient.quantidade} {ingredient.nome}
           </li>
         ))}
       </ul>
-      <button onClick={handleStart}>Começar</button>
+      <button className={styles.startButton} onClick={handleStart}>
+        Começar
+      </button>
     </div>
   );
 };
