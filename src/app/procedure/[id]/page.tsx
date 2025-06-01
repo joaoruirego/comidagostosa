@@ -14,6 +14,7 @@ type Procedure = {
 type Challenge = {
   id: string;
   texto: string;
+  titulo: string;
 };
 
 const SkeletonProcedureScreen: React.FC = () => (
@@ -131,7 +132,7 @@ export default function ProcedureScreen({
           }}
         />
         <h1 className={styles.title}>
-          {isStep ? `Passo ${index + 1}` : `Desafio ${index + 1}`}
+          {isStep ? `Passo ${index + 1}` : challenges[index].titulo}
         </h1>
         <p className={styles.text}>
           {isStep ? procedures[index].instrucoes : challenges[index].texto}
