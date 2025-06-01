@@ -62,7 +62,6 @@ const RecipeList: React.FC = () => {
               className={styles.recipeButton}
               onClick={() => handleRecipeClick(recipe.id)}
             >
-              {recipe.name}
               <div className={styles.recipeImage}>
                 <Image
                   src={recipe.image}
@@ -70,6 +69,17 @@ const RecipeList: React.FC = () => {
                   width={100}
                   height={100}
                 />
+              </div>
+              <div className={styles.recipeContent}>
+                <div className={styles.recipeName}>{recipe.name}</div>
+
+                <div className={styles.recipeDescription}>
+                  {recipe.description}
+                </div>
+
+                <div className={styles.recipeTime}>
+                  {recipe.estimated_time} minutos
+                </div>
               </div>
             </button>
           </li>
