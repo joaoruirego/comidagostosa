@@ -50,6 +50,12 @@
   border-radius: 50px;
   background-color: #fff;
   border: none;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.recipeButton:hover {
+  transform: scale(1.02);
 }
 
 .recipeContent {
@@ -135,4 +141,38 @@
   .recipeItem {
     font-size: 1.2rem;
   }
+}
+
+.skeletonItem {
+  display: flex;
+  flex-direction: column;
+  background-color: #f2f2f2;
+  border-radius: 50px;
+  height: 250px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.skeletonItem:hover {
+  transform: scale(1.02);
+}
+
+.skeletonImage {
+  width: 100%;
+  height: 150px;
+  background-color: #8c8c8c;
+  margin-bottom: 10px;
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
+}
+
+.skeletonText {
+  width: 80%;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-top: 10px;
+  height: 30px;
+  background-color: #8c8c8c;
+  border-radius: 5px;
 }

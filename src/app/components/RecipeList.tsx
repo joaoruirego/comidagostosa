@@ -13,6 +13,7 @@ const RecipeList: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoria_id");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,6 +33,8 @@ const RecipeList: React.FC = () => {
       } else {
         setCategories(categoriesResponse.data);
       }
+
+      setLoading(false);
     };
 
     fetchData();
@@ -55,36 +58,47 @@ const RecipeList: React.FC = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className={styles.searchInput}
       />
-      <ul className={styles.recipeList}>
-        {filteredRecipes.map((recipe) => (
-          <li className={styles.recipeItem} key={recipe.id}>
-            <button
-              className={styles.recipeButton}
-              onClick={() => handleRecipeClick(recipe.id)}
-            >
-              <div className={styles.recipeImage}>
-                <Image
-                  src={recipe.image}
-                  alt={recipe.name}
-                  width={100}
-                  height={100}
-                />
-              </div>
-              <div className={styles.recipeContent}>
-                <div className={styles.recipeName}>{recipe.name}</div>
-
-                <div className={styles.recipeDescription}>
-                  {recipe.description}
+      {loading ? (
+        <ul className={styles.recipeList}>
+          {Array.from({ length: 9 }).map((_, index) => (
+            <li className={styles.skeletonItem} key={index}>
+              <div className={styles.skeletonImage}></div>
+              <div className={styles.skeletonText}></div>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <ul className={styles.recipeList}>
+          {filteredRecipes.map((recipe) => (
+            <li className={styles.recipeItem} key={recipe.id}>
+              <button
+                className={styles.recipeButton}
+                onClick={() => handleRecipeClick(recipe.id)}
+              >
+                <div className={styles.recipeImage}>
+                  <Image
+                    src={recipe.image}
+                    alt={recipe.name}
+                    width={100}
+                    height={100}
+                  />
                 </div>
+                <div className={styles.recipeContent}>
+                  <div className={styles.recipeName}>{recipe.name}</div>
 
-                <div className={styles.recipeTime}>
-                  {recipe.estimated_time} minutos
+                  <div className={styles.recipeDescription}>
+                    {recipe.description}
+                  </div>
+
+                  <div className={styles.recipeTime}>
+                    {recipe.estimated_time} minutos
+                  </div>
                 </div>
-              </div>
-            </button>
-          </li>
-        ))}
-      </ul>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
