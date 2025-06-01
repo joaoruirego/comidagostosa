@@ -41,8 +41,13 @@ const FinalScreen: React.FC = () => {
       const formData = new FormData();
       formData.append("email", email);
 
-      if (fileInputRef.current?.files?.[0]) {
-        formData.append("image", fileInputRef.current.files[0]);
+      if (selectedImage) {
+        const response = await fetch(selectedImage);
+        const blob = await response.blob();
+        formData.append("image", blob, selectedImage);
+      } else {
+        setError("Por favor, selecione uma imagem");
+        return;
       }
 
       const response = await fetch("/api/send-email", {

@@ -37,16 +37,14 @@ export default async function handler(
       }
 
       try {
-        // Create a transporter object using SMTP transport
         const transporter = nodemailer.createTransport({
-          service: "Gmail", // Use your email service
+          service: "Gmail",
           auth: {
-            user: process.env.EMAIL_USER, // Your email address
-            pass: process.env.EMAIL_PASS, // Your email password or app-specific password
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS,
           },
         });
 
-        // Set up email data
         const mailOptions = {
           from: process.env.EMAIL_USER,
           to: email,
@@ -55,14 +53,12 @@ export default async function handler(
           attachments: [
             {
               filename: "photo.jpg",
-              path: image.filepath, // Use the file path from formidable
+              path: image.filepath,
             },
           ],
         };
 
-        // Send email
         await transporter.sendMail(mailOptions);
-
         res.status(200).json({ message: "Email sent successfully" });
       } catch (error) {
         console.error("Error sending email:", error);
