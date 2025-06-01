@@ -1,0 +1,45 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 50px 25px;
+}
+
+.title {
+  font-size: 3.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  letter-spacing: -0.05em;
+  line-height: 85%;
+  color: #333;
+}
+
+.description {
+  font-size: 22px;
+  font-weight: 400;
+  margin-bottom: 1rem;
+  color: #333;
+  line-height: 105%;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #fff;
+  border: 1px solid #9000ff;
+  box-shadow: 0 0 150px #9000ff99;
+  color: #fff;
+  cursor: pointer;
+  position: absolute;
+  bottom: 35px;
+  right: 0;
+  left: 0;
+  width: 75px;
+  height: 75px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
