@@ -1,14 +1,18 @@
 "use client";
 
-import React, { Suspense } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../styles/RecipeDetail.module.css";
 import Image from "next/image";
+import { supabase } from "../supabaseClient";
 
 type Ingredient = {
   id: string;
   quantidade: string;
-  nome: string;
+  ingrediente_id: string;
+  ingredientes: {
+    nome: string;
+  };
 };
 
 type Recipe = {
@@ -36,38 +40,78 @@ const SkeletonRecipeDetail: React.FC = () => (
   </div>
 );
 
-const RecipeDetail: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
+const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
+  recipe: baseRecipe,
+}) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoria_id");
 
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      const { data, error } = await supabase
+        .from("receita_ingredientes")
+        .select("id, quantidade, ingrediente_id, ingredientes(nome)")
+        .eq("receita_id", baseRecipe.id)
+        .order("ordem");
+
+      if (error) {
+        console.error("Erro ao buscar ingredientes:", error);
+      } else {
+        setIngredients(data || []);
+      }
+
+      setLoading(false);
+    };
+
+    fetchIngredients();
+  }, [baseRecipe.id]);
+
   const handleStart = () => {
-    router.push(`/procedure/${recipe.id}?categoria_id=${categoryId}`);
+    router.push(`/procedure/${baseRecipe.id}?categoria_id=${categoryId}`);
   };
 
   return (
     <Suspense fallback={<SkeletonRecipeDetail />}>
       <div className={styles.container}>
-        <h1 className={styles.title}>{recipe.name}</h1>
+        <h1 className={styles.title}>{baseRecipe.name}</h1>
         <Image
           className={styles.image}
-          src={recipe.imagem_url}
-          alt={recipe.name}
+          src={baseRecipe.imagem_url}
+          alt={baseRecipe.name}
           width={1000}
           height={1000}
         />
-        <p className={styles.description}>{recipe.description}</p>
+        <p className={styles.description}>{baseRecipe.description}</p>
         <p className={styles.time}>
-          ⏱️ Tempo Estimado: {recipe.estimated_time} minutos
+          ⏱️ Tempo Estimado: {baseRecipe.estimated_time} minutos
         </p>
+
         <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
-        <ul className={styles.ingredientsList}>
-          {recipe.ingredients.map((ingredient) => (
-            <li key={ingredient.id} className={styles.ingredientItem}>
-              {ingredient.quantidade} {ingredient.nome}
-            </li>
-          ))}
-        </ul>
+        {loading ? (
+          <ul className={styles.ingredientsList}>
+            {Array.from({ length: 5 }).map((_, index) => (
+              <li key={index} className={styles.skeletonText}></li>
+            ))}
+          </ul>
+        ) : (
+          <ul className={styles.ingredientsList}>
+            {ingredients.map((ingredient) => (
+              <li
+                key={ingredient.id}
+                style={{ fontWeight: 500 }}
+                className={styles.ingredientItem}
+              >
+                {ingredient.ingredientes.nome}{" "}
+                <b style={{ fontWeight: 300 }}>{ingredient.quantidade}</b>
+              </li>
+            ))}
+          </ul>
+        )}
+
         <button className={styles.startButton} onClick={handleStart}>
           Começar
         </button>
