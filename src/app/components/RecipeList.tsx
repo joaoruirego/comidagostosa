@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "../supabaseClient";
 import styles from "../styles/RecipeList.module.css";
+import Image from "next/image";
 
 const RecipeList: React.FC = () => {
   const [recipes, setRecipes] = useState<any[]>([]);
@@ -62,6 +63,14 @@ const RecipeList: React.FC = () => {
               onClick={() => handleRecipeClick(recipe.id)}
             >
               {recipe.name}
+              <div className={styles.recipeImage}>
+                <Image
+                  src={recipe.image}
+                  alt={recipe.name}
+                  width={100}
+                  height={100}
+                />
+              </div>
             </button>
           </li>
         ))}
