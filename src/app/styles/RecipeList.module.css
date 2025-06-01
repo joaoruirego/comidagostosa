@@ -57,7 +57,7 @@
   flex-direction: column;
   gap: 15px;
   padding-left: 25px;
-  padding-right: 10px;
+  padding-right: 25px;
 }
 
 .recipeName {
@@ -100,14 +100,39 @@
   border-top-right-radius: 50px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1200px) {
+  .container {
+    padding: 25px;
+    padding-top: 50px;
+  }
+
   .recipeList {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 700px) {
   .recipeList {
     grid-template-columns: 1fr;
+  }
+
+  .title {
+    font-size: 3.5rem;
+    margin-top: 75px;
+  }
+
+  .searchInput {
+    font-size: 1.2rem;
+    padding: 15px;
+    position: fixed;
+    top: 25px;
+    left: 15px;
+    right: 15px;
+    z-index: 100;
+    width: auto;
+  }
+
+  .recipeItem {
+    font-size: 1.2rem;
   }
 }
