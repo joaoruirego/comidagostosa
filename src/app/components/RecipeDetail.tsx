@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../styles/RecipeDetail.module.css";
 import Image from "next/image";
@@ -30,31 +30,33 @@ const RecipeDetail: React.FC<{ recipe: Recipe }> = ({ recipe }) => {
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>{recipe.name}</h1>
-      <Image
-        className={styles.image}
-        src={recipe.imagem_url}
-        alt={recipe.name}
-        width={100}
-        height={100}
-      />
-      <p className={styles.description}>{recipe.description}</p>
-      <p className={styles.time}>
-        ⏱️ Tempo Estimado: {recipe.estimated_time} minutos
-      </p>
-      <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
-      <ul className={styles.ingredientsList}>
-        {recipe.ingredients.map((ingredient) => (
-          <li key={ingredient.id} className={styles.ingredientItem}>
-            {ingredient.quantidade} {ingredient.nome}
-          </li>
-        ))}
-      </ul>
-      <button className={styles.startButton} onClick={handleStart}>
-        Começar
-      </button>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>{recipe.name}</h1>
+        <Image
+          className={styles.image}
+          src={recipe.imagem_url}
+          alt={recipe.name}
+          width={100}
+          height={100}
+        />
+        <p className={styles.description}>{recipe.description}</p>
+        <p className={styles.time}>
+          ⏱️ Tempo Estimado: {recipe.estimated_time} minutos
+        </p>
+        <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
+        <ul className={styles.ingredientsList}>
+          {recipe.ingredients.map((ingredient) => (
+            <li key={ingredient.id} className={styles.ingredientItem}>
+              {ingredient.quantidade} {ingredient.nome}
+            </li>
+          ))}
+        </ul>
+        <button className={styles.startButton} onClick={handleStart}>
+          Começar
+        </button>
+      </div>
+    </Suspense>
   );
 };
 

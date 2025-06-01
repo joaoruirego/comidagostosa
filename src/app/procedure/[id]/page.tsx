@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, use } from "react";
+import { useEffect, useState, use, Suspense } from "react";
 import { supabase } from "../../supabaseClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../../styles/ProcedureScreen.module.css";
@@ -103,16 +103,18 @@ export default function ProcedureScreen({
   };
 
   return (
-    <div className={styles.container}>
-      <h1 className={styles.title}>
-        {isStep ? `Passo ${index + 1}` : `Desafio ${index + 1}`}
-      </h1>
-      <p className={styles.text}>
-        {isStep ? procedures[index].instrucoes : challenges[index].texto}
-      </p>
-      <button className={styles.nextButton} onClick={handleNext}>
-        Próximo →
-      </button>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <div className={styles.container}>
+        <h1 className={styles.title}>
+          {isStep ? `Passo ${index + 1}` : `Desafio ${index + 1}`}
+        </h1>
+        <p className={styles.text}>
+          {isStep ? procedures[index].instrucoes : challenges[index].texto}
+        </p>
+        <button className={styles.nextButton} onClick={handleNext}>
+          Próximo →
+        </button>
+      </div>
+    </Suspense>
   );
 }
