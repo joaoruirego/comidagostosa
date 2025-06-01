@@ -9,6 +9,7 @@ const FinalScreen: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
   const categoryId = searchParams.get("categoria_id");
@@ -28,16 +29,22 @@ const FinalScreen: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically send the email and image to your backend
-    // For example:
+    setError(null);
+
     try {
-      const formData = new FormData();
-      formData.append("email", email);
-      if (selectedImage) {
-        formData.append("image", selectedImage);
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailPattern.test(email)) {
+        setError("Por favor, insira um email válido");
+        return;
       }
 
-      // Replace with your actual API endpoint
+      const formData = new FormData();
+      formData.append("email", email);
+
+      if (fileInputRef.current?.files?.[0]) {
+        formData.append("image", fileInputRef.current.files[0]);
+      }
+
       const response = await fetch("/api/send-email", {
         method: "POST",
         body: formData,
@@ -45,9 +52,12 @@ const FinalScreen: React.FC = () => {
 
       if (response.ok) {
         router.push("/");
+      } else {
+        const errorData = await response.json();
+        setError("Erro ao enviar email. Por favor, tente novamente.");
       }
     } catch (error) {
-      console.error("Error sending email:", error);
+      setError("Ocorreu um erro inesperado. Por favor, tente novamente.");
     }
   };
 
@@ -87,6 +97,7 @@ const FinalScreen: React.FC = () => {
             required
             className={styles.emailInput}
           />
+          {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
           <button type="submit" className={styles.buttonConcluir}>
             Concluir
           </button>
