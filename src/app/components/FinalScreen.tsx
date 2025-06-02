@@ -13,6 +13,16 @@ const FinalScreen: React.FC = () => {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+
+  const showTemporaryMessage = (text: string) => {
+    setMessage(text);
+    setShowMessage(true);
+    setTimeout(() => {
+      setShowMessage(false);
+    }, 3000);
+  };
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -37,8 +47,12 @@ const FinalScreen: React.FC = () => {
       if (!data?.publicUrl) throw new Error("Erro ao obter URL pública");
 
       setUploadedUrl(data.publicUrl);
+      showTemporaryMessage(
+        "Upload feito com sucesso. Agora envie para o email."
+      );
     } catch (err: unknown) {
       console.error(err);
+      showTemporaryMessage("Erro ao fazer upload.");
     } finally {
       setUploading(false);
     }
@@ -47,7 +61,20 @@ const FinalScreen: React.FC = () => {
 
   const handleSendEmail = async () => {
     if (!email || !uploadedUrl) {
+      showTemporaryMessage("Preencha o email e envie uma imagem.");
       return;
+    }
+
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, imageUrl: uploadedUrl }),
+    });
+
+    if (res.ok) {
+      showTemporaryMessage("Email enviado com sucesso! 🎉");
+    } else {
+      showTemporaryMessage("Erro ao enviar email.");
     }
 
     router.push("/");
@@ -106,6 +133,10 @@ const FinalScreen: React.FC = () => {
           height={1000}
         />
       )}
+
+      <p className={`${styles.message} ${showMessage ? styles.show : ""}`}>
+        {message}
+      </p>
 
       {uploadedUrl && (
         <div style={{ marginTop: 10, width: "100%" }}>
