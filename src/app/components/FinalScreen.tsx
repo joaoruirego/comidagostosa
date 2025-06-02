@@ -50,12 +50,6 @@ const FinalScreen: React.FC = () => {
       return;
     }
 
-    const res = await fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, imageUrl: uploadedUrl }),
-    });
-
     router.push("/");
   };
 
