@@ -8,77 +8,79 @@ import { v4 as uuidv4 } from "uuid";
 const FinalScreen: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
-
-  const handleTakePhoto = () => {
-    fileInputRef.current?.click();
-  };
+  const [uploading, setUploading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
-    if (!file) {
-      setError("Por favor, selecione uma imagem.");
-      return;
-    }
+    if (!file) return;
 
     const previewUrl = URL.createObjectURL(file);
     setSelectedImage(previewUrl);
-    setError(null);
     setUploading(true);
 
     try {
       const fileExt = file.name.split(".").pop();
       const fileName = `${uuidv4()}.${fileExt}`;
-      const filePath = `${fileName}`;
-
-      console.log("📤 Iniciando upload:", filePath);
-
-      const { error: uploadError } = await supabase.storage
+      const { error } = await supabase.storage
         .from("chefes")
-        .upload(filePath, file);
+        .upload(fileName, file);
 
-      if (uploadError) {
-        console.error("❌ Erro no upload:", uploadError.message || uploadError);
-        throw uploadError;
-      }
+      if (error) throw error;
 
-      const { data: publicUrlData, error: publicUrlError } = supabase.storage
-        .from("chefes")
-        .getPublicUrl(filePath);
+      const { data } = supabase.storage.from("chefes").getPublicUrl(fileName);
+      if (!data?.publicUrl) throw new Error("Erro ao obter URL pública");
 
-      if (publicUrlError || !publicUrlData?.publicUrl) {
-        console.error("❌ Erro ao obter URL pública:", publicUrlError);
-        throw new Error("Erro ao obter URL pública.");
-      }
-
-      console.log("✅ Upload concluído:", publicUrlData.publicUrl);
-      setUploadedUrl(publicUrlData.publicUrl);
+      setUploadedUrl(data.publicUrl);
+      setMessage("Upload feito com sucesso. Agora envie para o email.");
     } catch (err: any) {
-      console.error("❗ Erro inesperado:", err?.message || err);
-      setError(err?.message || "Erro desconhecido");
+      console.error(err);
+      setMessage("Erro ao fazer upload.");
     } finally {
       setUploading(false);
     }
   };
 
+  const handleSendEmail = async () => {
+    if (!email || !uploadedUrl) {
+      setMessage("Preencha o email e envie uma imagem.");
+      return;
+    }
+
+    const res = await fetch("/api/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, imageUrl: uploadedUrl }),
+    });
+
+    if (res.ok) {
+      setMessage("Email enviado com sucesso! 🎉");
+    } else {
+      setMessage("Erro ao enviar email.");
+    }
+  };
+
   return (
     <div style={{ padding: 20 }}>
-      <h1>Upload de Foto para Supabase</h1>
+      <h1>Envie sua foto</h1>
 
       <input
         type="file"
         ref={fileInputRef}
-        onChange={handleFileChange}
         accept="image/*"
         style={{ display: "none" }}
+        onChange={handleFileChange}
       />
 
-      <button onClick={handleTakePhoto} disabled={uploading}>
-        {uploading ? "Enviando..." : "Selecionar Foto"}
+      <button
+        onClick={() => fileInputRef.current?.click()}
+        disabled={uploading}
+      >
+        {uploading ? "Enviando imagem..." : "Escolher Imagem"}
       </button>
 
       {selectedImage && (
@@ -88,15 +90,21 @@ const FinalScreen: React.FC = () => {
       )}
 
       {uploadedUrl && (
-        <p style={{ marginTop: 10, color: "green" }}>
-          ✅ Upload concluído:{" "}
-          <a href={uploadedUrl} target="_blank">
-            Ver imagem
-          </a>
-        </p>
+        <div style={{ marginTop: 20 }}>
+          <input
+            type="email"
+            placeholder="Digite seu email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            style={{ padding: 10, width: 300 }}
+          />
+          <button onClick={handleSendEmail} style={{ marginTop: 10 }}>
+            Enviar imagem para o email
+          </button>
+        </div>
       )}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {message && <p style={{ marginTop: 20 }}>{message}</p>}
     </div>
   );
 };
