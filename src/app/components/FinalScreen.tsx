@@ -1,129 +1,102 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import styles from "../styles/FinalScreen.module.css";
 import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { supabase } from "../supabaseClient";
+import { v4 as uuidv4 } from "uuid";
 
 const FinalScreen: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoria_id");
-  const id = searchParams.get("id");
+  const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
 
   const handleTakePhoto = () => {
     fileInputRef.current?.click();
   };
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const file = event.target.files?.[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
+    if (!file) {
+      setError("Por favor, selecione uma imagem.");
+      return;
     }
-  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const previewUrl = URL.createObjectURL(file);
+    setSelectedImage(previewUrl);
     setError(null);
+    setUploading(true);
 
     try {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-      if (!emailPattern.test(email)) {
-        setError("Por favor, insira um email válido");
-        return;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      console.log("📤 Iniciando upload:", filePath);
+
+      const { error: uploadError } = await supabase.storage
+        .from("chefes")
+        .upload(filePath, file);
+
+      if (uploadError) {
+        console.error("❌ Erro no upload:", uploadError.message || uploadError);
+        throw uploadError;
       }
 
-      const formData = new FormData();
-      formData.append("email", email);
+      const { data: publicUrlData, error: publicUrlError } = supabase.storage
+        .from("chefes")
+        .getPublicUrl(filePath);
 
-      if (selectedImage) {
-        const response = await fetch(selectedImage);
-        const blob = await response.blob();
-        formData.append("image", blob, selectedImage);
-      } else {
-        setError("Por favor, selecione uma imagem");
-        return;
+      if (publicUrlError || !publicUrlData?.publicUrl) {
+        console.error("❌ Erro ao obter URL pública:", publicUrlError);
+        throw new Error("Erro ao obter URL pública.");
       }
 
-      const response = await fetch("/api/send-email", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        router.push("/");
-      } else {
-        const errorData = await response.json();
-        setError("Erro ao enviar email. Por favor, tente novamente.");
-      }
-    } catch (error) {
-      setError("Ocorreu um erro inesperado. Por favor, tente novamente.");
+      console.log("✅ Upload concluído:", publicUrlData.publicUrl);
+      setUploadedUrl(publicUrlData.publicUrl);
+    } catch (err: any) {
+      console.error("❗ Erro inesperado:", err?.message || err);
+      setError(err?.message || "Erro desconhecido");
+    } finally {
+      setUploading(false);
     }
   };
 
   return (
-    <div className={styles.container}>
-      <Image
-        src="/backgroundTeste2.png"
-        alt="background"
-        width={1000}
-        height={1000}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          zIndex: -1,
-          opacity: 0.15,
-        }}
+    <div style={{ padding: 20 }}>
+      <h1>Upload de Foto para Supabase</h1>
+
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        style={{ display: "none" }}
       />
 
-      {selectedImage ? (
-        <form onSubmit={handleSubmit}>
-          <Image
-            src={selectedImage}
-            alt="Selected photo"
-            width={300}
-            height={300}
-            className={styles.image}
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Digite seu email"
-            required
-            className={styles.emailInput}
-          />
-          {error && <p style={{ color: "red", marginTop: "10px" }}>{error}</p>}
-          <button type="submit" className={styles.buttonConcluir}>
-            Concluir
-          </button>
-        </form>
-      ) : (
-        <>
-          <h1 className={styles.title}>É hora de comer e tirar fotos</h1>
-          <h1 className={styles.description}>
-            Parabéns, superaram todos os desafios! Vamos tirar fotos dos nossos
-            chefes!
-          </h1>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="image/*"
-            style={{ display: "none" }}
-          />
-          <button onClick={handleTakePhoto} className={styles.button}></button>
-        </>
+      <button onClick={handleTakePhoto} disabled={uploading}>
+        {uploading ? "Enviando..." : "Selecionar Foto"}
+      </button>
+
+      {selectedImage && (
+        <div style={{ marginTop: 20 }}>
+          <Image src={selectedImage} alt="Preview" width={300} height={300} />
+        </div>
       )}
+
+      {uploadedUrl && (
+        <p style={{ marginTop: 10, color: "green" }}>
+          ✅ Upload concluído:{" "}
+          <a href={uploadedUrl} target="_blank">
+            Ver imagem
+          </a>
+        </p>
+      )}
+
+      {error && <p style={{ color: "red" }}>{error}</p>}
     </div>
   );
 };
