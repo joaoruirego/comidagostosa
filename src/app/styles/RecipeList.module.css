@@ -14,10 +14,11 @@
   letter-spacing: -0.05em;
   line-height: 85%;
   margin-bottom: 30px;
+  margin-top: 75px;
 }
 
 .searchInput {
-  width: 100%;
+  width: auto;
   padding: 20px;
   border-radius: 50px;
   font-size: 1.5rem;
@@ -26,6 +27,11 @@
   outline: none;
   background-color: #fff;
   color: #000;
+  position: fixed;
+  top: 55px;
+  left: 100px;
+  right: 100px;
+  z-index: 100;
 }
 
 .recipeList {
@@ -113,6 +119,20 @@
 
   .recipeList {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .searchInput {
+    font-size: 1.2rem;
+    padding: 15px;
+    padding-left: 25px;
+    padding-right: 25px;
+    position: fixed;
+    top: 25px;
+    left: 15px;
+    right: 15px;
+    z-index: 100;
+    width: auto;
+    box-shadow: 0 0 250px 0 #9000ffaa;
   }
 }
 
