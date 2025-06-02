@@ -4,6 +4,8 @@ import React, { useRef, useState } from "react";
 import Image from "next/image";
 import { supabase } from "../supabaseClient";
 import { v4 as uuidv4 } from "uuid";
+import styles from "../styles/FinalScreen.module.css";
+import { useRouter } from "next/navigation";
 
 const FinalScreen: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -37,13 +39,14 @@ const FinalScreen: React.FC = () => {
 
       setUploadedUrl(data.publicUrl);
       setMessage("Upload feito com sucesso. Agora envie para o email.");
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
       setMessage("Erro ao fazer upload.");
     } finally {
       setUploading(false);
     }
   };
+  const router = useRouter();
 
   const handleSendEmail = async () => {
     if (!email || !uploadedUrl) {
@@ -62,49 +65,78 @@ const FinalScreen: React.FC = () => {
     } else {
       setMessage("Erro ao enviar email.");
     }
+
+    router.push("/");
   };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h1>Envie sua foto</h1>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        accept="image/*"
-        style={{ display: "none" }}
-        onChange={handleFileChange}
+    <div className={styles.container}>
+      <Image
+        src="/backgroundTeste2.png"
+        alt="background"
+        width={1000}
+        height={1000}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: -1,
+          opacity: 0.15,
+        }}
       />
+      {!selectedImage && (
+        <>
+          <h1 className={styles.title}>É hora de comer e tirar fotos</h1>
+          <p className={styles.description}>
+            Parabéns, superaram todos os desafios! Vamos tirar fotos dos nossos
+            chefes!
+          </p>
 
-      <button
-        onClick={() => fileInputRef.current?.click()}
-        disabled={uploading}
-      >
-        {uploading ? "Enviando imagem..." : "Escolher Imagem"}
-      </button>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className={styles.button}
+            disabled={uploading}
+          >
+            {uploading ? "Enviando imagem..." : "Escolher Imagem"}
+          </button>
+        </>
+      )}
 
       {selectedImage && (
-        <div style={{ marginTop: 20 }}>
-          <Image src={selectedImage} alt="Preview" width={300} height={300} />
-        </div>
+        <Image
+          className={styles.image}
+          src={selectedImage}
+          alt="Preview"
+          width={1000}
+          height={1000}
+        />
       )}
 
       {uploadedUrl && (
-        <div style={{ marginTop: 20 }}>
+        <div style={{ marginTop: 10, width: "100%" }}>
           <input
             type="email"
             placeholder="Digite seu email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            style={{ padding: 10, width: 300 }}
+            className={styles.emailInput}
           />
-          <button onClick={handleSendEmail} style={{ marginTop: 10 }}>
-            Enviar imagem para o email
+          <button className={styles.buttonConcluir} onClick={handleSendEmail}>
+            Enviar imagem para o email →
           </button>
         </div>
       )}
-
-      {message && <p style={{ marginTop: 20 }}>{message}</p>}
     </div>
   );
 };

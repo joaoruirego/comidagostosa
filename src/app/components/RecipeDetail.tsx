@@ -51,7 +51,7 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoria_id");
+  const categoryId = searchParams?.get("categoria_id");
 
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [loading, setLoading] = useState(true);
@@ -78,10 +78,10 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
             item.ingredientes && !Array.isArray(item.ingredientes)
               ? item.ingredientes
               : item.ingredientes &&
-                Array.isArray(item.ingredientes) &&
-                item.ingredientes.length > 0
-              ? item.ingredientes[0]
-              : { nome: "" },
+                  Array.isArray(item.ingredientes) &&
+                  item.ingredientes.length > 0
+                ? item.ingredientes[0]
+                : { nome: "" },
         }));
         setIngredients(normalized);
       }

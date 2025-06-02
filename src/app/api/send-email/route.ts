@@ -23,7 +23,7 @@ export async function POST(req: Request) {
       subject: "Sua Foto da Comida!",
       html: `
         <h2>Obrigado por participar!</h2>
-        <p>Aqui está a sua imagem:</p>
+        <p>Aqui estão os nossos chefes 👩‍🍳🧑‍🍳!</p>
         <img src="${imageUrl}" alt="Imagem" width="400" />
       `,
     };
@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ success: true }), {
       status: 200,
     });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Erro ao enviar email:", error);
     return new Response("Erro no envio de email", { status: 500 });
   }

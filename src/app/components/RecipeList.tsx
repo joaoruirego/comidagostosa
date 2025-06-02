@@ -19,7 +19,7 @@ const RecipeList: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoria_id");
+  const categoryId = searchParams?.get("categoria_id");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

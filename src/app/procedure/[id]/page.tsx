@@ -38,7 +38,7 @@ export default function ProcedureScreen({
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const searchParams = useSearchParams();
-  const categoryId = searchParams.get("categoria_id");
+  const categoryId = searchParams?.get("categoria_id");
 
   useEffect(() => {
     const fetchData = async () => {
