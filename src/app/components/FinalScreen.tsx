@@ -13,7 +13,6 @@ const FinalScreen: React.FC = () => {
   const [uploadedUrl, setUploadedUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
 
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -38,10 +37,8 @@ const FinalScreen: React.FC = () => {
       if (!data?.publicUrl) throw new Error("Erro ao obter URL pública");
 
       setUploadedUrl(data.publicUrl);
-      setMessage("Upload feito com sucesso. Agora envie para o email.");
     } catch (err: unknown) {
       console.error(err);
-      setMessage("Erro ao fazer upload.");
     } finally {
       setUploading(false);
     }
@@ -50,7 +47,6 @@ const FinalScreen: React.FC = () => {
 
   const handleSendEmail = async () => {
     if (!email || !uploadedUrl) {
-      setMessage("Preencha o email e envie uma imagem.");
       return;
     }
 
@@ -59,12 +55,6 @@ const FinalScreen: React.FC = () => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, imageUrl: uploadedUrl }),
     });
-
-    if (res.ok) {
-      setMessage("Email enviado com sucesso! 🎉");
-    } else {
-      setMessage("Erro ao enviar email.");
-    }
 
     router.push("/");
   };
