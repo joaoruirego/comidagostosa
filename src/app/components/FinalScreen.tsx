@@ -142,14 +142,20 @@ const FinalScreen: React.FC = () => {
         <div style={{ marginTop: 10, width: "100%" }}>
           <input
             type="email"
-            placeholder="Digite seu email"
+            placeholder="Digite o seu email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className={styles.emailInput}
           />
-          <button className={styles.buttonConcluir} onClick={handleSendEmail}>
-            Enviar imagem para o email →
-          </button>
+          <a
+            href="https://forms.gle/LQgw4jKBt4giJBLP8"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button className={styles.buttonConcluir} onClick={handleSendEmail}>
+              Enviar imagem para o email →
+            </button>
+          </a>
         </div>
       )}
     </div>
