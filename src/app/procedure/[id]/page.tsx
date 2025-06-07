@@ -112,6 +112,9 @@ export default function ProcedureScreen({
     }
   };
 
+  // Calculate progress percentage
+  const progressWidth = `${((currentStep + 1) / (procedures.length * 2)) * 100}%`;
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <div className={styles.container}>
@@ -137,9 +140,18 @@ export default function ProcedureScreen({
         <p className={styles.text}>
           {isStep ? procedures[index].instrucoes : challenges[index].texto}
         </p>
-        <button className={styles.nextButton} onClick={handleNext}>
-          Próximo →
-        </button>
+        <div className={styles.progressContainerMain}>
+          <div onClick={handleNext} className={styles.progressContainer}>
+            Próximo →
+            <button
+              className={styles.nextButton}
+              onClick={handleNext}
+              style={
+                { "--progress-width": progressWidth } as React.CSSProperties
+              }
+            ></button>
+          </div>
+        </div>
       </div>
     </Suspense>
   );
