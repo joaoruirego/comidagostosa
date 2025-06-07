@@ -114,6 +114,7 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
             opacity: 0.15,
           }}
         />
+
         <h1 className={styles.title}>{baseRecipe.name}</h1>
         <Image
           className={styles.image}
@@ -126,7 +127,6 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
         <p className={styles.time}>
           ⏱️ Tempo Estimado: {baseRecipe.estimated_time} minutos
         </p>
-
         <h3 className={styles.ingredientsTitle}>Ingredientes</h3>
         {loading ? (
           <ul className={styles.ingredientsList}>
@@ -148,7 +148,6 @@ const RecipeDetail: React.FC<{ recipe: Omit<Recipe, "ingredients"> }> = ({
             ))}
           </ul>
         )}
-
         <button className={styles.startButton} onClick={handleStart}>
           Começar
         </button>

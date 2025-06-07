@@ -100,7 +100,7 @@ const FinalScreen: React.FC = () => {
       />
       {!selectedImage && (
         <>
-          <h1 className={styles.title}>É hora de comer e tirar fotos</h1>
+          <h1 className={styles.title}>🧑‍🍳 É hora de comer e tirar fotos</h1>
           <p className={styles.description}>
             Parabéns, superaram todos os desafios! Vamos tirar fotos dos nossos
             chefes!
